@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>라이트 매니저 가이드</title>
+<style>
+:root {
+  --brand: #00C46A;
+  --brand-soft: #E8FAF2;
+  --brand-text: #007A42;
+  --neutral-50: #F7F7F8;
+  --neutral-100: #EFEFEF;
+  --neutral-200: #E2E2E2;
+  --neutral-400: #ABABAB;
+  --neutral-600: #6B6B6B;
+  --neutral-800: #2C2C2C;
+  --neutral-900: #141414;
+  --warning-soft: #FFF7E6;
+  --warning-text: #9A5F00;
+  --error-soft: #FFF0F0;
+  --error-text: #C0392B;
+  --blue-soft: #EEF4FF;
+  --blue-text: #2255CC;
+  --surface: #FFFFFF;
+  --bg: #F7F7F8;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --divider: #EFEFEF;
+  --text-primary: #141414;
+  --text-secondary: #6B6B6B;
+  --text-tertiary: #ABABAB;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+  background: #E2E2E2;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.viewport {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--bg);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 4px 32px rgba(0,0,0,0.08);
+}
+
+/* ── 홈 ── */
+#home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.home-header {
+  padding: 28px 20px 20px;
+  background: var(--surface);
+}
+.home-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--blue-text);
+  margin-bottom: 6px;
+}
+.home-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.home-sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.home-buttons {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  background: var(--blue-soft);
+}
+
+.home-btn {
+  flex: 1;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  cursor: pointer;
+  text-align: center;
+  border: 1.5px solid transparent;
+  transition: filter .15s, border-color .2s;
+  -webkit-user-select: none;
+}
+.home-btn.sim { background: var(--surface); border-color: var(--neutral-200); }
+.home-btn.sos { background: var(--surface); border-color: var(--neutral-200); }
+
+.home-btn .home-btn-inner { transition: transform .2s cubic-bezier(.34,1.56,.64,1); transform-origin: center; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+.home-btn.sim:active { background: var(--blue-soft); border-color: var(--blue-text); }
+.home-btn.sos:active { background: var(--blue-soft); border-color: var(--blue-text); }
+
+.home-btn-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--blue-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  flex-shrink: 0;
+  line-height: 1;
+  text-align: center;
+  font-style: normal;
+  transition: background .2s;
+}
+.home-btn-icon span {
+  display: block;
+  line-height: 1;
+  position: relative;
+  top: 0;
+}
+
+.home-btn-body { min-width: 0; }
+.home-btn-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+.home-btn.sim .home-btn-title { color: var(--text-primary); }
+.home-btn.sos .home-btn-title { color: var(--text-primary); }
+
+.home-btn-desc {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.home-btn.sim .home-btn-desc { color: var(--text-secondary); }
+.home-btn.sos .home-btn-desc { color: var(--text-secondary); }
+
+.home-btn-arrow { display: none; }
+
+/* ── 오버레이 ── */
+.overlay {
+  background: var(--bg);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.overlay.open { transform: translateX(0); }
+
+/* AppBar */
+.appbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--divider);
+  padding: 0 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.appbar-back {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+.appbar-back:active { background: var(--neutral-100); }
+.appbar-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  flex: 1;
+}
+
+/* 오버레이 스크롤 영역 */
+.overlay-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 오버레이는 viewport 기준으로 */
+.viewport { isolation: isolate; }
+.overlay, .detail-overlay {
+  position: absolute !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  height: 100%;
+}
+
+/* ── 공통 섹션 ── */
+.section-header {
+  padding: 20px 20px 8px;
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* ── 흐름 리스트 ── */
+.flow-intro {
+  margin: 16px 20px 0;
+  padding: 14px 16px;
+  background: var(--blue-soft);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--blue-text);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.list-card {
+  margin: 12px 20px 0;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1.5px solid transparent;
+  transition: border-color .15s;
+}
+.list-card:hover {
+  border-color: var(--blue-text);
+}
+.section-group {
+  transition: color .15s;
+}
+
+.list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.list-item:last-child { border-bottom: none; }
+.list-item {
+  cursor: default;
+  transition: background .15s;
+}
+
+.step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.step-dot.pre { background: var(--blue-text); color: #fff; }
+.step-dot.mid { background: var(--blue-soft); color: var(--blue-text); border: 2px solid var(--blue-text); }
+.step-dot.post { background: var(--blue-text); color: #fff; }
+
+.list-item-body { flex: 1; }
+.list-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  margin-bottom: 3px;
+}
+.list-item-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ── SOS 목록 ── */
+.sos-list {
+  padding: 12px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sos-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  border: 1px solid var(--divider);
+  border-left-width: 4px;
+  border-left-color: var(--blue-text);
+  transition: background .1s;
+  -webkit-user-select: none;
+}
+.sos-card:active { background: var(--blue-soft); border-left-color: var(--blue-text); }
+@media (hover: hover) {
+  .sos-card:hover { background: var(--blue-soft); border-left-color: var(--blue-text); }
+  .sos-card:hover .sos-title { color: var(--blue-text); }
+  .sos-card:hover .sos-sub { color: var(--blue-text); }
+}
+.sos-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--neutral-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.sos-chevron {
+  color: var(--text-tertiary);
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: color .15s, transform .15s;
+}
+@media (hover: hover) {
+  .sos-card:hover .sos-chevron { color: var(--blue-text); transform: translateX(3px); }
+}
+.sos-card:active .sos-chevron { color: var(--blue-text); }
+.sos-body { flex: 1; min-width: 0; }
+.sos-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.sos-title { font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; line-height: 1.35; }
+.sos-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 3px; line-height: 1.4; }
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.badge.warning { background: #FFEBEB; color: #C0392B; }
+
+/* ── 상세 오버레이 (2뎁스) ── */
+.detail-overlay {
+  background: var(--bg);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.detail-overlay.open { transform: translateX(0); }
+
+.detail-intro {
+  margin: 16px 20px 0;
+  padding: 12px 16px;
+  background: var(--blue-soft);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--blue-text);
+  font-weight: 500;
+}
+.case-list {
+  margin: 20px 20px 0;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.case-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.case-item:last-child { border-bottom: none; }
+.case-when {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--blue-text);
+  margin-bottom: 6px;
+}
+.case-action {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+.case-script {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--neutral-50);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--neutral-200);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.bottom-pad { height: 40px; }
+
+.faq-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--divider);
+}
+.faq-q {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.faq-q::before {
+  content: 'Q. ';
+  color: var(--blue-text);
+  font-weight: 700;
+}
+.faq-a {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.sim-footer {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px 32px;
+  margin-top: 8px;
+}
+.sim-footer-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: filter .15s;
+  letter-spacing: -0.2px;
+}
+.sim-footer-btn:active { filter: brightness(0.93); }
+.sim-footer-btn {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+.sim-footer-btn span:first-child { text-align: left; }
+.sim-footer-btn span:last-child { text-align: right; }
+.sim-footer-btn.secondary {
+  background: var(--neutral-100);
+  color: var(--text-primary);
+}
+.sim-footer-btn.primary {
+  background: var(--blue-soft);
+  color: var(--blue-text);
+}
+.sim-footer-btn.brand {
+  background: var(--blue-soft);
+  color: var(--blue-text);
+}
+
+/* 아이콘 SVG */
+svg.icon { display: block; }
+
+@media (hover: hover) {
+  .home-btn:hover { border-color: var(--blue-text); }
+  .home-btn:hover .home-btn-inner { transform: scale(1.1); }
+  .home-btn:hover .home-btn-icon { background: var(--blue-text); }
+  .home-btn.sim:hover .home-btn-desc,
+  .home-btn.sos:hover .home-btn-desc { color: var(--blue-text); }
+  .list-item:hover { background: var(--blue-soft); }
+  .list-item:hover .list-item-desc { color: var(--blue-text); }
+  .list-item:hover .list-item-title { color: var(--blue-text); }
+  .section-group:hover .section-label { color: var(--blue-text); }
+  .section-group:hover .list-card { border-color: var(--blue-text); }
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+
+<!-- ────────── 홈 ────────── -->
+<div id="home">
+  <div class="home-header">
+    <div class="home-eyebrow">라이트 매니저 가이드</div>
+    <div class="home-title">처음이어도<br>잘할 수 있어요</div>
+    <div class="home-sub">스크린이 대부분 안내해줘요. 첫 참여자 89%가 쉽다고 했어요.</div>
+  </div>
+
+  <div class="home-buttons">
+    <button class="home-btn sim" onclick="openOverlay('sim')">
+      <div class="home-btn-inner">
+        <div class="home-btn-icon"><span>⚽</span></div>
+        <div class="home-btn-body">
+          <div class="home-btn-title">매치 시뮬레이션</div>
+          <div class="home-btn-desc">처음 라이트 매니저 활동을 하나요?<br>경기 흐름을 미리 확인해 보세요</div>
+        </div>
+      </div>
+    </button>
+
+    <button class="home-btn sos" onclick="openOverlay('sos')">
+      <div class="home-btn-inner">
+        <div class="home-btn-icon"><span>🚨</span></div>
+        <div class="home-btn-body">
+          <div class="home-btn-title">문제가 있어요</div>
+          <div class="home-btn-desc">경기 전, 중 문제가 발생했다면</div>
+        </div>
+      </div>
+    </button>
+
+  </div>
+</div>
+
+<!-- ────────── 매치 시뮬레이션 오버레이 ────────── -->
+<div id="overlay-sim" class="overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeOverlay('sim')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">매치 시뮬레이션</span>
+  </div>
+  <div class="overlay-body">
+    <div class="flow-intro">
+      스크린이 대부분 안내해줘요.<br>이 흐름만 머릿속에 넣고 가면 충분해요.
+    </div>
+
+    <div class="section-group">
+    <div class="section-header"><span class="section-label">경기 전</span></div>
+    <div class="list-card">
+      <div class="list-item">
+        <div class="step-dot pre">1</div>
+        <div class="list-item-body">
+          <div class="list-item-title">15분 전 도착</div>
+          <div class="list-item-desc">조끼 번호순으로 그물에 걸어두기.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="step-dot pre">2</div>
+        <div class="list-item-body">
+          <div class="list-item-title">매치 시작 준비</div>
+          <div class="list-item-desc">지각자 체크. 매치 시작 5분 전부터 쿼터 탭에서 팀 순서 변경 기능 활용 가능.</div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="section-group">
+    <div class="section-header"><span class="section-label">경기 중</span></div>
+    <div class="list-card">
+      <div class="list-item">
+        <div class="step-dot mid">3</div>
+        <div class="list-item-body">
+          <div class="list-item-title">매치 시작</div>
+          <div class="list-item-desc">스크린 시작 버튼을 눌러 매치 시작.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="step-dot mid">4</div>
+        <div class="list-item-body">
+          <div class="list-item-title">골 기록</div>
+          <div class="list-item-desc">골 터지면 아무나 골 버튼 누르기.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="step-dot mid">5</div>
+        <div class="list-item-body">
+          <div class="list-item-title">키퍼/쿼터 교체</div>
+          <div class="list-item-desc">스크린이 알려줘요. 시간이 지체되지 않도록 참가자 독려.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="step-dot mid">6</div>
+        <div class="list-item-body">
+          <div class="list-item-title">과열 방지</div>
+          <div class="list-item-desc">매치가 과열되거나 분위기가 나빠지지 않게 중재.</div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="section-group">
+    <div class="section-header"><span class="section-label">경기 후</span></div>
+    <div class="list-card">
+      <div class="list-item">
+        <div class="step-dot post">7</div>
+        <div class="list-item-body">
+          <div class="list-item-title">장비 반납</div>
+          <div class="list-item-desc">공과 조끼 개수 확인 후 런드리 창고에 반납.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="step-dot post">8</div>
+        <div class="list-item-body">
+          <div class="list-item-title">리포트 작성</div>
+          <div class="list-item-desc">POM을 선정하고 리포트를 작성하면 모두 완료.</div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeOverlay('sim')">
+        <span>←</span><span>뒤로 가기</span><span></span>
+      </button>
+      <button class="sim-footer-btn primary" onclick="closeOverlay('sim'); openOverlay('sos')">
+        <span></span><span>문제가 있어요 🚨</span><span>→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ────────── 문제 해결 오버레이 ────────── -->
+<div id="overlay-sos" class="overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeOverlay('sos')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">문제가 있어요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="section-header"><span class="section-label">상황을 선택하세요</span></div>
+    <div class="sos-list">
+      <div class="sos-card" onclick="openDetail('late')" style="border-left-color:var(--blue-text); position:relative;">
+        <span class="badge warning" style="position:absolute; top:10px; left:10px;">가장 빈번</span>
+        <div class="sos-icon" >⏰</div>
+        <div class="sos-body">
+          <div class="sos-title">지각자가 있어요</div>
+          <div class="sos-sub">가장 자주 생기는 상황이에요</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+
+      <div class="sos-card" onclick="openDetail('team')" style="border-left-color:var(--blue-text)">
+        <div class="sos-icon" >🔄</div>
+        <div class="sos-body">
+          <div class="sos-title">팀을 바꿔달라고 해요</div>
+          <div class="sos-sub">밸런스·친구 요청 포함</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+
+      <div class="sos-card" onclick="openDetail('rain')" style="border-left-color:var(--blue-text)">
+        <div class="sos-icon" >🌧️</div>
+        <div class="sos-body">
+          <div class="sos-title">비가 와요</div>
+          <div class="sos-sub">루프탑·야외 구장</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+
+      <div class="sos-card" onclick="openDetail('short')" style="border-left-color:var(--blue-text)">
+        <div class="sos-icon" >👥</div>
+        <div class="sos-body">
+          <div class="sos-title">인원이 부족해요</div>
+          <div class="sos-sub">노쇼·중간 이탈 대응</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+
+      <div class="sos-card" onclick="openDetail('screen')" style="border-left-color:var(--blue-text)">
+        <div class="sos-icon" >📺</div>
+        <div class="sos-body">
+          <div class="sos-title">스크린이 이상해요</div>
+          <div class="sos-sub">오작동·먹통 대응</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+
+      <div class="sos-card" onclick="openDetail('app')" style="border-left-color:var(--blue-text)">
+        <div class="sos-icon" >⚠️</div>
+        <div class="sos-body">
+          <div class="sos-title">앱 오류가 났어요</div>
+          <div class="sos-sub">버튼이 안 눌리거나 기능 작동 오류</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+    </div>
+    <div class="sos-list" style="padding-top:0; margin-top:8px">
+      <div class="sos-card" onclick="openDetail('faq')" style="border-left-color:var(--blue-text)">
+        <div class="sos-icon" style="background:var(--blue-soft)">💬</div>
+        <div class="sos-body">
+          <div class="sos-title">FAQ</div>
+          <div class="sos-sub">자주 묻는 질문</div>
+        </div>
+        <span class="sos-chevron">›</span>
+      </div>
+    </div>
+
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeOverlay('sos')">
+        <span>←</span><span>뒤로 가기</span><span></span>
+      </button>
+      <button class="sim-footer-btn brand" onclick="closeOverlay('sos'); openOverlay('sim')">
+        <span></span><span>매치 시뮬레이션 ⚽</span><span>→</span>
+      </button>
+    </div>
+  </div>
+
+
+<div id="detail-late" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('late')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">지각자가 있어요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">전체 이슈 중 가장 많이 발생</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">매치 시작 전</div>
+        <div class="case-action">지각자가 많다면 5분 까지는 기다려볼 만해요. 그 이상은 기다리지 마세요.</div>
+        <div class="case-script">"지각자가 많아서 조금만 기다렸다가 시작할게요. 먼저 오신 분들은 볼 돌리면서 몸 풀고 계세요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">첫 쿼터 팀에 지각자가 있고 휴식 팀은 모두 왔을 때</div>
+        <div class="case-action">라커룸 쿼터 탭에서 '팀 순서 변경' 기능을 활용해 쿼터 순서를 변경하세요. 앱에서 바꾸면 스크린에도 잠시 후 적용될 거예요.</div>
+        <div class="case-script">"지각자가 많은 관계로 팀 순서를 변경할게요. OO팀 경기장으로 들어와 주세요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">첫 쿼터 팀에서 한 두명 부족할 때</div>
+        <div class="case-action">휴식 팀에서 한 두명이 대신 뛸 수 있도록 해주세요. 옐로 팀 휴식자 2명이 레드 팀 대신 뛴다면 레드 조끼를 입고 경기장에 들어가면 돼요.</div>
+        <div class="case-script">"레드 팀 두 분이 아직 안 오셔서 옐로 팀에서 두 분만 지원해 주세요. 레드 조끼 입고 뛰어주시면 됩니다."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">지각자가 왔을 때</div>
+        <div class="case-action">경기 흐름을 유지하면서 지각자가 바로 뛸 수 있게 준비해오도록 안내해 주세요. 지각자가 뛸 준비가 되면 공이 나갔을 때 투입시켜 주세요.</div>
+        <div class="case-script">"지각자분들 오셔서 대신 뛰어주신 분들은 조끼를 넘겨주시고 휴식해 주세요. 도움 주셔서 감사합니다."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">지각자가 내 쿼터를 보전해달라고 할 때</div>
+        <div class="case-action">지각자는 일부 쿼터 또는 일정 시간을 못 뛸 수밖에 없어요. 매치 시간에 맞춰 오지 않아 생긴 불이익은 참가자 본인이 감수해야 해요. 라이트 매니저는 잘못이 없어요.</div>
+        <div class="case-script">"매치 시간에 맞춰 오지 않아서 발생한 쿼터 손해는 제가 도움드리기 어려워요."</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-team" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('team')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">팀을 바꿔달라고 해요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">팀 밸런스를 맞추기 위한 팀 변경만 권장해요.</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">팀 배정은 기본적으로</div>
+        <div class="case-action">플랩 친구 관계와 레벨, 성별을 기반으로 밸런스 있게 팀을 나눠요. 아직 현장 밸런스를 모르는 상황 또는 밸런스가 잘 맞는 상황에서의 팀 변경은 밸런스를 오히려 망칠 수 있어요.</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">친구끼리 같은 팀으로 붙여달라고 할 때</div>
+        <div class="case-action">플랩 친구를 맺지 않은 플래버들이 친구라며 팀 변경을 요청할 때는 가능한 선에서 변경해 주세요. 매치 시작 시간이 임박하거나 바쁘다면 우선 변경 없이 매치를 시작하는 것도 좋아요.</div>
+        <div class="case-script">"지금 매치 시작이 임박했으니 우선 배정된 대로 게임을 뛰는 게 좋겠어요. 몇 쿼터 진행해 보고 밸런스가 안 맞는다면 팀 변경을 고려해 드릴게요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">팀 밸런스를 맞춰달라고 할 때</div>
+        <div class="case-action">삼파전이라면 3, 6쿼터 종료 후에, 단파전이라면 언제든지 팀 변경을 할 수 있어요. 비슷한 수준의 참가자를 맞바꾸기만 해도 분위기가 환기될 수 있어요.</div>
+        <div class="case-script">"팀 밸런스 조정 요청이 있어서 분위기 환기 차원에서 팀을 조금 바꿀게요. 남은 시간도 새로운 팀원과 매너 있는 매치 부탁드려요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">팀 간 실력 차이가 심할 때 (삼파전)</div>
+        <div class="case-action">팀 변경하기 좋은 시점은 삼파전의 경우 40분, 80분 시점이에요. 세 팀 중 강팀과 약팀을 섞어주는 게 효과적이고 같은 번호끼리 교체하는 걸 추천해요. 활동량과 긍정 바이브, 친구 관계를 고려해 교체하면 더 좋아요.</div>
+        <div class="case-script">"모두 함께 즐기려면 팀 밸런스 조절이 필요해 보여서 친구 관계를 고려해 팀을 조금 바꿀게요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">팀 간 실력 차이가 심할 때 (단파전)</div>
+        <div class="case-action">팀 변경은 언제든지 해도 좋아요. 다만 같은 번호끼리 바꿔야만 모두가 골키퍼를 공평하게 볼 수 있어요.</div>
+        <div class="case-script">"모두 함께 즐기려면 팀 밸런스 조절이 필요해 보여서 친구 관계를 고려해 팀을 조금 바꿀게요."</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-screen" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('screen')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">스크린이 이상해요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">수동 진행으로 대체 가능해요</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">먼저 해볼 것</div>
+        <div class="case-action">앱 완전 종료 후 재실행. 그래도 안 되면 수동 진행으로 넘어가세요.</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">수동 진행 방법</div>
+        <div class="case-action">핸드폰 타이머 + 메모장 사용.<br>쿼터: 각 팀 10분 / 순서: 레드 → 블루 → 레드</div>
+        <div class="case-script">"오늘 스크린에 문제가 생겨서 수동으로 진행할게요. 양해 부탁드려요!"</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-short" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('short')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">인원이 부족해요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">노쇼 및 매치 이탈이 있는 경우</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">노쇼가 있는 경우</div>
+        <div class="case-action">노쇼는 보통 매치 시작 전에는 알 수 없어요. 지각으로 체크했던 참가자가 매치 1시간 이후에도 오지 않았다면 노쇼로 체크해 주세요. 노쇼인 참가자를 대신해서 휴식 팀의 참가자가 매치를 뛰도록 요청해 주세요.</div>
+        <div class="case-script">"오늘 불참자가 계셔서 쉬는 팀에서 한 분 뛰어주시면 감사하겠습니다."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">노쇼가 많은 경우</div>
+        <div class="case-action">노쇼가 많은 경우는 매우 드물지만 발생하면 아주 곤란한 경우예요. 참가자들과 협의해서 현장에 있는 인원에 맞춰 새로운 로테이션으로 매치를 진행할 수 있어요. 라커룸의 쿼터 탭 상단 다른 로테이션 카드를 확인해 주세요.</div>
+        <div class="case-script">"오늘 불참자가 많아서 원래 로테이션대로 운영이 어려울 것 같아요. 지금 인원에 맞는 로테이션으로 변경해서 진행할 테니 협조 부탁드려요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">매치 이탈자가 있는 경우</div>
+        <div class="case-action">부상이나 질병, 개인 사유로 인해 참가자가 매치를 이탈하게 되면 쉬는 팀 참가자가 매치를 대신 뛸 수 있도록 요청해 주세요. 무단 이탈이 발생한 경우 비매너 신고를 통해 알려주세요.</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-rain" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('rain')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">비가 와요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">소셜 매치는 비가 오나 눈이 오나 즐겁게 진행하는 걸 원칙으로 해요.</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">가랑비 (1mm 내외)</div>
+        <div class="case-action">보통 문제없이 매치를 진행해요. 혹시라도 귀가를 원하는 참가자가 있다면 귀가 안내를 해주시고 리포트에 현장 귀가자를 체크해 주세요.</div>
+        <div class="case-script">"혹시라도 귀가를 원하시면 귀가하셔도 돼요. 제가 리포트에 현장 귀가자로 기록할 테니 자동 환불받으실 수 있을 거예요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">보통 비 ~ 강한 비 (2~10mm 내외)</div>
+        <div class="case-action">참가자들의 매치 참여 의사를 확인해요. 10명 이상이 매치 진행에 동의하면 매치를 진행하고 현장 귀가자는 리포트에 적어요. 10명 미만이 동의할 경우 매치를 취소하고 모두 귀가자로 처리해요.</div>
+        <div class="case-script">"매치 진행에 동의하는 분이 10명 이상이면 매치를 진행하고, 아니면 매치를 취소할게요. 진행 여부와 관계없이 귀가하셔도 돼요. 귀가자는 제가 리포트에 기록할 테니 자동 환불받으실 수 있을 거예요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">폭우</div>
+        <div class="case-action">안전이 우선이에요. 경기를 즉시 중단하고 비가 그칠 때까지 기다리거나 참가자들의 매치 참여 의사를 확인해서 매치를 조기 종료할 수 있어요.</div>
+        <div class="case-script">"안전 사고가 발생할 수 있으니 경기를 중단할게요. 개인 짐을 챙겨서 안전한 곳으로 이동해 주세요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">비가 올 때 리포트 작성</div>
+        <div class="case-action">리포트 작성 플로우에서 '눈/비가 왔어요' 항목을 선택하고 매치를 진행한 시간, 현장 귀가자 등을 체크한 후 리포트를 제출하면 돼요. 기타 특이사항이 있었다면 '기타 할 말이 있어요' 항목을 선택하고 텍스트 입력란에 내용을 적어주세요.</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-app" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('app')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">앱 오류가 났어요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">POM·권한·전광판 반영 지연</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">POM 선정 권한 없음</div>
+        <div class="case-action">건너뛰고 경기 완료 처리. 매치 ID와 결과를 피드백 채널에 남겨주세요.</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">앱↔전광판 반영 지연</div>
+        <div class="case-action">앱 재로그인 후 재시도. 해결 안 되면 수동 기록 후 완료 처리.</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">공통 대응</div>
+        <div class="case-action">매치 ID 메모 → 피드백 채널에 남기기.</div>
+      </div>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-faq" class="detail-overlay">
+<div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('faq')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="appbar-title">FAQ</span>
+  </div>
+  <div class="overlay-body">
+    <div class="section-header"><span class="section-label">자주 묻는 질문</span></div>
+
+    <div class="list-card">
+      <div class="faq-item">
+        <div class="faq-q">경기 시작 전 스크린이 안 켜져요.</div>
+        <div class="faq-a">스크린이 없어도 라커룸의 쿼터 탭을 보고 매치를 진행할 수 있어요. 매치 리포트에 스크린 문제를 적어주시면 최대한 빠르게 복원할게요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">조끼 번호가 없어요.</div>
+        <div class="faq-a">특정 번호의 조끼가 없는 경우 같은 색상 다른 번호의 조끼를 입히고 임시 조치임을 안내해 주세요. 매치 종료 후 리포트 장비 관련 항목에 남겨주시면 신속하게 채워둘게요.<br><br>조끼 수량이 부족한 경우에는 문의 채널로 알려주세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">스코어 버튼은 어디 있나요?</div>
+        <div class="faq-a">플랩풋볼 앱 라커룸 페이지에 앱 버튼이 있고, 경기장의 스크린 아래에 실물 버튼이 있어요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">참여자들이 판정 문제로 다툴 때는요?</div>
+        <div class="faq-a">직접 판정하지 않아도 돼요. "양팀이 합의해주시면 그대로 진행할게요"라고 하세요. 과열되면 잠깐 경기를 멈추고 분위기를 환기시켜 주세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">부상자가 발생하면 어떻게 하나요?</div>
+        <div class="faq-a">즉시 경기를 멈추고 부상자 상태를 확인하세요. 가벼운 부상일 경우엔 휴식할 수 있도록 안내하고, 심한 부상일 경우엔 환자의 동의를 얻어 구급차를 불러주세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">조끼가 분실됐어요.</div>
+        <div class="faq-a">경기 종료 후 반납된 조끼 수가 부족하다면 조끼를 입고 귀가하려고 하거나 다음 경기에 그대로 참여하는 참가자가 있는지 확인하세요. 리포트 장비 관련 항목에 내용을 남겨주시면 적절하게 조치할게요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">POM을 선정했는데 앱에서 반영이 안 돼요.</div>
+        <div class="faq-a">매치 정보와 POM 선정 결과를 문의 채널로 남겨주세요.</div>
+      </div>
+      <div class="faq-item" style="border-bottom:none">
+        <div class="faq-q">처음인데 너무 긴장돼요.</div>
+        <div class="faq-a">괜찮아요 😊 스크린이 안내해주고, 참여자들도 대부분 협조적이에요. 모르는 게 생기면 솔직하게 "처음이라 확인해 볼게요!"라고 해도 전혀 문제없어요.</div>
+      </div>
+    </div>
+
+    <div style="padding: 16px 20px; font-size: 12px; color: var(--text-tertiary); line-height: 1.6; text-align: center;">
+      이 가이드는 실제 라이트 매니저 경험 조사(330건+) 데이터를 바탕으로 작성되었습니다.
+    </div>
+    </div>
+
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" style="flex:1" onclick="closeDetail('faq')">
+        <span>←</span><span>뒤로 가기</span><span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openOverlay(id) {
+  const el = document.getElementById('overlay-' + id);
+  el.style.display = 'flex';
+  requestAnimationFrame(() => el.classList.add('open'));
+}
+
+function closeOverlay(id) {
+  const el = document.getElementById('overlay-' + id);
+  el.classList.remove('open');
+  el.addEventListener('transitionend', () => { el.style.display = 'none'; }, { once: true });
+  closeAllDetails();
+}
+
+function openDetail(id) {
+  // Close any open detail first
+  document.querySelectorAll('.detail-overlay').forEach(el => {
+    el.classList.remove('open');
+    el.style.display = 'none';
+  });
+  const el = document.getElementById('detail-' + id);
+  el.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('open')));
+}
+
+function closeDetail(id) {
+  const el = document.getElementById('detail-' + id);
+  el.classList.remove('open');
+  setTimeout(() => { el.style.display = 'none'; }, 300);
+}
+
+function closeAllDetails() {
+  document.querySelectorAll('.detail-overlay').forEach(el => {
+    el.classList.remove('open');
+    el.style.display = 'none';
+  });
+}
+
+document.querySelectorAll('.overlay, .detail-overlay').forEach(el => {
+  el.style.display = 'none';
+});
+</script>
+
+</div>
+
+</div><!-- .viewport -->
+</body>
+</html>
+
