@@ -45,13 +45,14 @@ body {
 }
 
 .viewport {
-  max-width: 640px;
+  max-width: 450px;
   margin: 0 auto;
   background: var(--bg);
   min-height: 100vh;
   height: 100vh;
   position: relative;
   overflow: hidden;
+  border-radius: 8px;
   box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 4px 32px rgba(0,0,0,0.08);
 }
 
@@ -98,7 +99,7 @@ body {
 }
 
 .home-btn {
-  flex: 1;
+  aspect-ratio: 3 / 2;
   width: 100%;
   border-radius: var(--radius-lg);
   padding: 32px 24px;
