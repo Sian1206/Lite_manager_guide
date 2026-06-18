@@ -58,15 +58,24 @@ body {
 
 /* ── 홈 ── */
 #home {
-  min-height: 100vh;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  padding: 0;
+  z-index: 1;
+  background: var(--surface);
 }
 
+.home-fixed-top {
+  flex-shrink: 0;
+}
+.home-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .home-header {
-  padding: 28px 20px 20px;
-  background: var(--surface);
+  padding: 28px 20px 16px;
 }
 .home-eyebrow {
   font-size: 12px;
@@ -90,12 +99,11 @@ body {
 }
 
 .home-buttons {
-  padding: 16px 20px;
+  padding: 12px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  background: var(--blue-soft);
+  gap: 8px;
+  background: var(--surface);
 }
 
 .home-btn {
@@ -123,14 +131,14 @@ body {
 .home-btn.sos:active { background: var(--blue-soft); border-color: var(--blue-text); }
 
 .home-btn-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
   background: var(--blue-soft);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 22px;
   flex-shrink: 0;
   line-height: 1;
   text-align: center;
@@ -144,7 +152,7 @@ body {
   top: 0;
 }
 
-.home-btn-body { min-width: 0; }
+.home-btn-body { min-width: 0; flex: 1; }
 .home-btn-title {
   font-size: 22px;
   font-weight: 700;
@@ -158,8 +166,7 @@ body {
   font-size: 15px;
   line-height: 1.6;
 }
-.home-btn.sim .home-btn-desc { color: var(--text-secondary); }
-.home-btn.sos .home-btn-desc { color: var(--text-secondary); }
+.home-btn .home-btn-desc { color: var(--text-secondary); }
 
 .home-btn-arrow { display: none; }
 
@@ -237,15 +244,15 @@ body {
   overflow: hidden;
 }
 .detail-overlay {
-  position: absolute !important;
+  position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: var(--bg);
-  z-index: 300;
-  display: flex;
+  z-index: 500;
+  display: none;
   flex-direction: column;
-  transform: translateX(100%);
-  transition: transform .28s cubic-bezier(.4,0,.2,1);
   overflow: hidden;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(0.25, 0, 0.1, 1);
 }
 
 /* ── 공통 섹션 ── */
@@ -403,15 +410,17 @@ body {
 
 /* ── 상세 오버레이 (2뎁스) ── */
 .detail-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: var(--bg);
-  z-index: 300;
-  display: flex;
+  z-index: 500;
+  display: none;
   flex-direction: column;
-  transform: translateX(100%);
-  transition: transform .28s cubic-bezier(.4,0,.2,1);
   overflow: hidden;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(0.25, 0, 0.1, 1);
 }
-.detail-overlay.open { transform: translateX(0); }
+
 
 .detail-intro {
   margin: 16px 20px 0;
@@ -434,16 +443,17 @@ body {
 }
 .case-item:last-child { border-bottom: none; }
 .case-when {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--blue-text);
   margin-bottom: 6px;
 }
 .case-action {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-primary);
   line-height: 1.6;
+  padding-left: 12px;
 }
 .case-script {
   margin-top: 8px;
@@ -455,9 +465,39 @@ body {
   color: var(--text-secondary);
   line-height: 1.6;
   font-style: italic;
+  margin-left: 12px;
 }
 
 .bottom-pad { height: 40px; }
+
+/* Home tabs */
+.home-tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--divider);
+  background: var(--surface);
+  padding: 0 20px;
+}
+.home-tab {
+  flex: 1;
+  padding: 13px 0 11px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color .15s, border-color .15s;
+  letter-spacing: -0.2px;
+}
+.home-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+  font-weight: 700;
+}
+.home-panel { display: none; }
+.home-panel.active { display: block; flex: 1; min-height: 0; }
 
 /* Accordion */
 .accordion-item {
@@ -630,9 +670,7 @@ body {
 /* 아이콘 SVG */
 svg.icon { display: block; }
 
-@media (hover: hover) {
-  .home-btn:hover { border-color: var(--blue-text); }
-  .home-btn:hover .home-btn-inner { transform: scale(1.1); }
+
   .home-btn:hover .home-btn-icon { background: var(--blue-text); }
   .home-btn.sim:hover .home-btn-desc,
   .home-btn.sos:hover .home-btn-desc { color: var(--blue-text); }
@@ -649,44 +687,20 @@ svg.icon { display: block; }
 
 <!-- ────────── 홈 ────────── -->
 <div id="home">
-  <div class="home-header">
-    <div class="home-eyebrow">라이트 매니저 가이드</div>
-    <div class="home-title">처음이어도<br>잘할 수 있어요</div>
-    <div class="home-sub">스크린이 대부분 안내해줘요. 첫 참여자 89%가 쉽다고 했어요.</div>
+  <div class="home-fixed-top">
+    <div class="home-header">
+      <div class="home-eyebrow">라이트 매니저 가이드</div>
+      <div class="home-title">처음이어도<br>잘할 수 있어요</div>
+      <div class="home-sub">스크린이 대부분 안내해줘요. 첫 참여자 89%가 쉽다고 했어요.</div>
+    </div>
+    <div class="home-tab-bar">
+      <button class="home-tab active" onclick="switchHomeTab('sim', this)">⚽ 매치 시뮬레이션</button>
+      <button class="home-tab" onclick="switchHomeTab('sos', this)">🚨 문제가 있어요</button>
+    </div>
   </div>
-
-  <div class="home-buttons">
-    <button class="home-btn sim" onclick="openOverlay('sim')">
-      <div class="home-btn-inner">
-        <div class="home-btn-icon"><span>⚽</span></div>
-        <div class="home-btn-body">
-          <div class="home-btn-title">매치 시뮬레이션</div>
-          <div class="home-btn-desc">처음 라이트 매니저 활동을 하나요?<br>경기 흐름을 미리 확인해 보세요</div>
-        </div>
-      </div>
-    </button>
-
-    <button class="home-btn sos" onclick="openOverlay('sos')">
-      <div class="home-btn-inner">
-        <div class="home-btn-icon"><span>🚨</span></div>
-        <div class="home-btn-body">
-          <div class="home-btn-title">문제가 있어요</div>
-          <div class="home-btn-desc">경기 전, 중 문제가 발생했다면</div>
-        </div>
-      </div>
-    </button>
-
-  </div>
-</div>
-
-<!-- ────────── 매치 시뮬레이션 오버레이 ────────── -->
-<div id="overlay-sim" class="overlay">
-  <div class="appbar">
-    <button class="appbar-back" onclick="closeOverlay('sim')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
-    <span class="appbar-title">매치 시뮬레이션</span>
-  </div>
-  <div class="overlay-body">
-    <div class="flow-intro">
+  <div class="home-scroll">
+    <div id="home-panel-sim" class="home-panel active">
+<div class="flow-intro">
       스크린이 대부분 안내해줘요.<br>이 흐름만 머릿속에 넣고 가면 충분해요.
     </div>
 
@@ -711,7 +725,7 @@ svg.icon { display: block; }
         <div class="accordion-num" data-section="pre">2</div>
         <div class="accordion-label">
           <div class="accordion-title">매치 시작 준비</div>
-          <div class="accordion-desc">지각자 체크. 매치 5분 전부터 팀 순서 변경 가능.</div>
+          <div class="accordion-desc">지각자 체크. 매치 시작 5분 전부터 쿼터 탭에서 팀 순서 변경 기능 활용 가능.</div>
         </div>
         <span class="accordion-chevron">›</span>
       </button>
@@ -807,26 +821,9 @@ svg.icon { display: block; }
         <div class="accordion-image">이미지 준비 중</div>
       </div>
     </div>
-
-    <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeOverlay('sim')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeOverlay('sim'); openOverlay('sos')">
-        <span></span><span>문제가 있어요 🚨</span><span>→</span>
-      </button>
     </div>
-  </div>
-</div>
-
-<!-- ────────── 문제 해결 오버레이 ────────── -->
-<div id="overlay-sos" class="overlay">
-  <div class="appbar">
-    <button class="appbar-back" onclick="closeOverlay('sos')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
-    <span class="appbar-title">문제가 있어요</span>
-  </div>
-  <div class="overlay-body">
-    <div class="section-header"><span class="section-label">상황을 선택하세요</span></div>
+    <div id="home-panel-sos" class="home-panel">
+<div class="section-header"><span class="section-label">상황을 선택하세요</span></div>
     <div class="sos-list">
       <div class="sos-card" onclick="openDetail('late')" style="border-left-color:var(--blue-text); position:relative;">
         <span class="badge warning" style="position:absolute; top:6px; left:10px;">가장 빈번</span>
@@ -894,23 +891,9 @@ svg.icon { display: block; }
         <span class="sos-chevron">›</span>
       </div>
     </div>
-
-    <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeOverlay('sos')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn brand" onclick="closeOverlay('sos'); openOverlay('sim')">
-        <span></span><span>매치 시뮬레이션 ⚽</span><span>→</span>
-      </button>
-    </div>
   </div>
 
-
-
-
-
-
-
+  </div>
 
 <div id="detail-late" class="detail-overlay">
   <div class="appbar">
@@ -946,19 +929,13 @@ svg.icon { display: block; }
         <div class="case-script">"매치 시간에 맞춰 오지 않아서 발생한 쿼터 손해는 제가 도움드리기 어려워요."</div>
       </div>
     </div>
-        <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeDetail('late')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeDetail('late'); openDetail('team')">
-        <span></span><span>팀을 바꿔달라고 해요</span><span>→</span>
-      </button>
-    </div>
-  </div>
 </div>
-<div id="detail-team"  class="detail-overlay">
+
+    </div>
+<div id="detail-team" class="detail-overlay">
   <div class="appbar">
-    <button class="appbar-back" onclick="closeDetail('team')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
+    <button class="appbar-back" onclick="closeDetail('team')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
     <span class="appbar-title">팀을 바꿔달라고 해요</span>
   </div>
   <div class="overlay-body">
@@ -989,81 +966,17 @@ svg.icon { display: block; }
         <div class="case-script">"모두 함께 즐기려면 팀 밸런스 조절이 필요해 보여서 친구 관계를 고려해 팀을 조금 바꿀게요."</div>
       </div>
     </div>
-        <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeDetail('team')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeDetail('team'); openDetail('rain')">
-        <span></span><span>스크린이 이상해요</span><span>→</span>
-      </button>
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeDetail('team')"><span>←</span><span>뒤로 가기</span><span></span></button>
+      <button class="sim-footer-btn primary" onclick="closeDetail('team'); openDetail('rain')"><span></span><span>비가 와요</span><span>→</span></button>
     </div>
+    <div class="bottom-pad"></div>
   </div>
 </div>
-<div id="detail-screen"  class="detail-overlay">
+<div id="detail-rain" class="detail-overlay">
   <div class="appbar">
-    <button class="appbar-back" onclick="closeDetail('screen')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
-    <span class="appbar-title">스크린이 이상해요</span>
-  </div>
-  <div class="overlay-body">
-    <div class="detail-intro">앱을 활용해서 대응할 수 있어요.</div>
-    <div class="case-list">
-      <div class="case-item">
-        <div class="case-when">스크린이 미작동하는 경우</div>
-        <div class="case-action">비가 오거나, 외부인의 조작이 있는 경우, 부득이하게 스크린 전원이 꺼질 수 있어요. 직접 조작하지 말고 문의 채널로 알려주세요. 플랩풋볼 앱의 라커룸 쿼터 탭을 활용하면 매치를 쉽게 진행할 수 있어요.</div>
-        <div class="case-script">"스크린에 문제가 있는 것 같아서 제가 쿼터 탭을 보고 매치 팀, 선수별 역할을 알려드릴게요. 핸드폰을 볼 수 있는 점 양해해 주세요."</div>
-      </div>
-      <div class="case-item">
-        <div class="case-when">스크린이 오작동하는 경우</div>
-        <div class="case-action">쿼터 탭에 안내된 것보다 쿼터 시간이 짧게 설정되어 있는 경우, 키퍼가 꼬이는 경우, 골 효과 등 조작하지 않은 이펙트가 작동될 경우엔 문의 채널로 알려주세요. 스크린은 무시하고 라이트 매니저님의 안내로 매치를 진행하는 게 좋아요. 플랩풋볼 앱의 라커룸 쿼터 탭을 활용하면 매치를 쉽게 진행할 수 있어요.</div>
-        <div class="case-script">"스크린이 정보를 잘못 알려주고 있어요. 제가 올바른 정보를 알려드리며 매치를 진행할 테니 스크린 화면과 소리는 무시해 주세요."</div>
-      </div>
-    </div>
-        <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeDetail('screen')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeDetail('screen'); openDetail('app')">
-        <span></span><span>인원이 부족해요</span><span>→</span>
-      </button>
-    </div>
-  </div>
-</div>
-<div id="detail-short"  class="detail-overlay">
-  <div class="appbar">
-    <button class="appbar-back" onclick="closeDetail('short')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
-    <span class="appbar-title">인원이 부족해요</span>
-  </div>
-  <div class="overlay-body">
-    <div class="detail-intro">노쇼 및 매치 이탈이 있는 경우</div>
-    <div class="case-list">
-      <div class="case-item">
-        <div class="case-when">노쇼가 있는 경우</div>
-        <div class="case-action">노쇼는 보통 매치 시작 전에는 알 수 없어요. 지각으로 체크했던 참가자가 매치 1시간 이후에도 오지 않았다면 노쇼로 체크해 주세요. 노쇼인 참가자를 대신해서 휴식 팀의 참가자가 매치를 뛰도록 요청해 주세요.</div>
-        <div class="case-script">"오늘 불참자가 계셔서 쉬는 팀에서 한 분 뛰어주시면 감사하겠습니다."</div>
-      </div>
-      <div class="case-item">
-        <div class="case-when">노쇼가 많은 경우</div>
-        <div class="case-action">노쇼가 많은 경우는 매우 드물지만 발생하면 아주 곤란한 경우예요. 참가자들과 협의해서 현장에 있는 인원에 맞춰 새로운 로테이션으로 매치를 진행할 수 있어요. 라커룸의 쿼터 탭 상단 다른 로테이션 카드를 확인해 주세요.</div>
-        <div class="case-script">"오늘 불참자가 많아서 원래 로테이션대로 운영이 어려울 것 같아요. 지금 인원에 맞는 로테이션으로 변경해서 진행할 테니 협조 부탁드려요."</div>
-      </div>
-      <div class="case-item">
-        <div class="case-when">매치 이탈자가 있는 경우</div>
-        <div class="case-action">부상이나 질병, 개인 사유로 인해 참가자가 매치를 이탈하게 되면 쉬는 팀 참가자가 매치를 대신 뛸 수 있도록 요청해 주세요. 무단 이탈이 발생한 경우 비매너 신고를 통해 알려주세요.</div>
-      </div>
-    </div>
-        <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeDetail('short')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeDetail('short'); openDetail('screen')">
-        <span></span><span>비가 와요</span><span>→</span>
-      </button>
-    </div>
-  </div>
-</div>
-<div id="detail-rain"  class="detail-overlay">
-  <div class="appbar">
-    <button class="appbar-back" onclick="closeDetail('rain')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
+    <button class="appbar-back" onclick="closeDetail('rain')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
     <span class="appbar-title">비가 와요</span>
   </div>
   <div class="overlay-body">
@@ -1089,19 +1002,75 @@ svg.icon { display: block; }
         <div class="case-action">리포트 작성 플로우에서 '눈/비가 왔어요' 항목을 선택하고 매치를 진행한 시간, 현장 귀가자 등을 체크한 후 리포트를 제출하면 돼요. 기타 특이사항이 있었다면 '기타 할 말이 있어요' 항목을 선택하고 텍스트 입력란에 내용을 적어주세요.</div>
       </div>
     </div>
-        <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeDetail('rain')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeDetail('rain'); openDetail('short')">
-        <span></span><span>앱 오류가 났어요</span><span>→</span>
-      </button>
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeDetail('rain')"><span>←</span><span>뒤로 가기</span><span></span></button>
+      <button class="sim-footer-btn primary" onclick="closeDetail('rain'); openDetail('short')"><span></span><span>인원이 부족해요</span><span>→</span></button>
     </div>
+    <div class="bottom-pad"></div>
   </div>
 </div>
-<div id="detail-app"  class="detail-overlay">
+<div id="detail-short" class="detail-overlay">
   <div class="appbar">
-    <button class="appbar-back" onclick="closeDetail('app')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
+    <button class="appbar-back" onclick="closeDetail('short')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
+    <span class="appbar-title">인원이 부족해요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">노쇼 및 매치 이탈이 있는 경우</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">노쇼가 있는 경우</div>
+        <div class="case-action">노쇼는 보통 매치 시작 전에는 알 수 없어요. 지각으로 체크했던 참가자가 매치 1시간 이후에도 오지 않았다면 노쇼로 체크해 주세요. 노쇼인 참가자를 대신해서 휴식 팀의 참가자가 매치를 뛰도록 요청해 주세요.</div>
+        <div class="case-script">"오늘 불참자가 계셔서 쉬는 팀에서 한 분 뛰어주시면 감사하겠습니다."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">노쇼가 많은 경우</div>
+        <div class="case-action">노쇼가 많은 경우는 매우 드물지만 발생하면 아주 곤란한 경우예요. 참가자들과 협의해서 현장에 있는 인원에 맞춰 새로운 로테이션으로 매치를 진행할 수 있어요. 라커룸의 쿼터 탭 상단 다른 로테이션 카드를 확인해 주세요.</div>
+        <div class="case-script">"오늘 불참자가 많아서 원래 로테이션대로 운영이 어려울 것 같아요. 지금 인원에 맞는 로테이션으로 변경해서 진행할 테니 협조 부탁드려요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">매치 이탈자가 있는 경우</div>
+        <div class="case-action">부상이나 질병, 개인 사유로 인해 참가자가 매치를 이탈하게 되면 쉬는 팀 참가자가 매치를 대신 뛸 수 있도록 요청해 주세요. 무단 이탈이 발생한 경우 비매너 신고를 통해 알려주세요.</div>
+      </div>
+    </div>
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeDetail('short')"><span>←</span><span>뒤로 가기</span><span></span></button>
+      <button class="sim-footer-btn primary" onclick="closeDetail('short'); openDetail('screen')"><span></span><span>스크린이 이상해요</span><span>→</span></button>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-screen" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('screen')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
+    <span class="appbar-title">스크린이 이상해요</span>
+  </div>
+  <div class="overlay-body">
+    <div class="detail-intro">앱을 활용해서 대응할 수 있어요.</div>
+    <div class="case-list">
+      <div class="case-item">
+        <div class="case-when">스크린이 미작동하는 경우</div>
+        <div class="case-action">비가 오거나, 외부인의 조작이 있는 경우, 부득이하게 스크린 전원이 꺼질 수 있어요. 직접 조작하지 말고 문의 채널로 알려주세요. 플랩풋볼 앱의 라커룸 쿼터 탭을 활용하면 매치를 쉽게 진행할 수 있어요.</div>
+        <div class="case-script">"스크린에 문제가 있는 것 같아서 제가 쿼터 탭을 보고 매치 팀, 선수별 역할을 알려드릴게요. 핸드폰을 볼 수 있는 점 양해해 주세요."</div>
+      </div>
+      <div class="case-item">
+        <div class="case-when">스크린이 오작동하는 경우</div>
+        <div class="case-action">쿼터 탭에 안내된 것보다 쿼터 시간이 짧게 설정되어 있는 경우, 키퍼가 꼬이는 경우, 골 효과 등 조작하지 않은 이펙트가 작동될 경우엔 문의 채널로 알려주세요. 스크린은 무시하고 라이트 매니저님의 안내로 매치를 진행하는 게 좋아요. 플랩풋볼 앱의 라커룸 쿼터 탭을 활용하면 매치를 쉽게 진행할 수 있어요.</div>
+        <div class="case-script">"스크린이 정보를 잘못 알려주고 있어요. 제가 올바른 정보를 알려드리며 매치를 진행할 테니 스크린 화면과 소리는 무시해 주세요."</div>
+      </div>
+    </div>
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeDetail('screen')"><span>←</span><span>뒤로 가기</span><span></span></button>
+      <button class="sim-footer-btn primary" onclick="closeDetail('screen'); openDetail('app')"><span></span><span>앱 오류가 났어요</span><span>→</span></button>
+    </div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+<div id="detail-app" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('app')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
     <span class="appbar-title">앱 오류가 났어요</span>
   </div>
   <div class="overlay-body">
@@ -1120,24 +1089,21 @@ svg.icon { display: block; }
         <div class="case-action">리포트는 매치 다음 날 08시까지만 작성이 가능해요. 작성 가능 시간 내인데 리포트 작성이 불가능한 경우, 문의 채널로 알려주세요. 내용을 파악한 후 리포트 작성을 도와드릴게요.</div>
       </div>
     </div>
-        <div class="sim-footer">
-      <button class="sim-footer-btn secondary" onclick="closeDetail('app')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
-      <button class="sim-footer-btn primary" onclick="closeDetail('app'); openDetail('faq')">
-        <span></span><span>FAQ</span><span>→</span>
-      </button>
+    <div class="sim-footer">
+      <button class="sim-footer-btn secondary" onclick="closeDetail('app')"><span>←</span><span>뒤로 가기</span><span></span></button>
+      <button class="sim-footer-btn primary" onclick="closeDetail('app'); openDetail('faq')"><span></span><span>FAQ</span><span>→</span></button>
     </div>
+    <div class="bottom-pad"></div>
   </div>
 </div>
-<div id="detail-faq"  class="detail-overlay">
-<div class="appbar">
-    <button class="appbar-back" onclick="closeDetail('faq')"><svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
+<div id="detail-faq" class="detail-overlay">
+  <div class="appbar">
+    <button class="appbar-back" onclick="closeDetail('faq')">
+      <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>뒤로</button>
     <span class="appbar-title">FAQ</span>
   </div>
   <div class="overlay-body">
     <div class="section-header"><span class="section-label">자주 묻는 질문</span></div>
-
     <div class="list-card">
       <div class="faq-item">
         <div class="faq-q">경기 시작 전 스크린이 안 켜져요.</div>
@@ -1172,86 +1138,73 @@ svg.icon { display: block; }
         <div class="faq-a">괜찮아요 😊 스크린이 안내해주고, 참여자들도 대부분 협조적이에요. 모르는 게 생기면 솔직하게 "처음이라 확인해 볼게요!"라고 해도 전혀 문제없어요.</div>
       </div>
     </div>
-
-    <div style="padding: 16px 20px; font-size: 12px; color: var(--text-tertiary); line-height: 1.6; text-align: center;">
-      이 가이드는 실제 라이트 매니저 경험 조사(330건+) 데이터를 바탕으로 작성되었습니다.
-    </div>
-    </div>
-
     <div class="sim-footer">
-      <button class="sim-footer-btn secondary" style="flex:1" onclick="closeDetail('faq')">
-        <span>←</span><span>뒤로 가기</span><span></span>
-      </button>
+      <button class="sim-footer-btn secondary" style="flex:1" onclick="closeDetail('faq')"><span>←</span><span>뒤로 가기</span><span></span></button>
     </div>
+    <div class="bottom-pad"></div>
   </div>
+</div>
+
+</div>
+
 </div><!-- .viewport -->
 <script>
-function openOverlay(id) {
-  const el = document.getElementById('overlay-' + id);
-  el.style.display = 'flex';
-  requestAnimationFrame(() => el.classList.add('open'));
-}
-
-function closeOverlay(id) {
-  const el = document.getElementById('overlay-' + id);
-  el.classList.remove('open');
-  el.addEventListener('transitionend', () => { el.style.display = 'none'; }, { once: true });
-  closeAllDetails();
+function switchHomeTab(name, el) {
+  document.querySelectorAll('.home-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.home-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('home-panel-' + name).classList.add('active');
 }
 
 function openDetail(id) {
-  // Hide all non-transitioning details
   document.querySelectorAll('.detail-overlay').forEach(el => {
-    if (!el.classList.contains('open')) {
-      el.style.display = 'none';
-    }
+    el.style.display = 'none';
+    el.style.transform = 'translateX(100%)';
   });
   const el = document.getElementById('detail-' + id);
+  if (!el) return;
   el.style.display = 'flex';
-  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('open')));
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.transform = 'translateX(0)';
+  }));
 }
 
 function closeDetail(id) {
   const el = document.getElementById('detail-' + id);
-  el.classList.remove('open');
-  setTimeout(() => {
-    el.style.display = 'none';
-  }, 300);
+  if (!el) return;
+  el.style.transform = 'translateX(100%)';
+  setTimeout(() => { el.style.display = 'none'; }, 300);
 }
 
 function closeAllDetails() {
   document.querySelectorAll('.detail-overlay').forEach(el => {
-    el.classList.remove('open');
+    el.style.transform = 'translateX(100%)';
     el.style.display = 'none';
   });
 }
 
 function toggleAccordion(item) {
-  const overlay = item.closest('.overlay-body');
-  if (!overlay) return;
-
+  const container = item.closest('.home-scroll') || item.closest('.overlay-body');
   const isOpen = item.classList.contains('open');
-
-  // Close all accordions
-  overlay.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('open'));
-
-  // Reset all section labels
-  overlay.querySelectorAll('.section-label').forEach(el => el.classList.remove('section-label-active'));
-
-  // If it wasn't open, open it
+  if (container) {
+    container.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('open'));
+    container.querySelectorAll('.section-label').forEach(el => el.classList.remove('section-label-active'));
+  }
   if (!isOpen) {
     item.classList.add('open');
     const numEl = item.querySelector('.accordion-num');
     const section = numEl ? numEl.dataset.section : null;
-    if (section) {
-      const header = overlay.querySelector(`[data-section="${section}"].section-header .section-label`);
+    if (section && container) {
+      const header = container.querySelector('[data-section="' + section + '"].section-header .section-label');
       if (header) header.classList.add('section-label-active');
     }
   }
 }
 
-document.querySelectorAll('.overlay, .detail-overlay').forEach(el => {
+// Init
+document.querySelectorAll('.detail-overlay').forEach(el => {
   el.style.display = 'none';
+  el.style.transform = 'translateX(100%)';
 });
 </script>
 </body>
