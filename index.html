@@ -325,6 +325,16 @@ body {
   color: var(--blue-text);
   line-height: 1.6;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.flow-intro-emoji {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+.flow-intro-text {
+  flex: 1;
 }
 
 .list-card {
@@ -393,19 +403,19 @@ body {
   gap: 8px;
 }
 .sos-card {
-  background: var(--surface);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 14px;
   cursor: pointer;
-  border: 1px solid var(--divider);
-  border-left-width: 4px;
-  border-left-color: var(--blue-text);
-  transition: background .1s;
+  border: none;
+  transition: filter .1s;
   -webkit-user-select: none;
 }
+.sos-card:active { filter: brightness(0.97); }
+.sos-card.priority { background: var(--blue-soft); }
+.sos-card.general { background: var(--neutral-50); }
 .sos-card:active { background: var(--blue-soft); border-left-color: var(--blue-text); }
 @media (hover: hover) {
   .sos-card:hover { background: var(--blue-soft); border-left-color: var(--blue-text); }
@@ -416,23 +426,14 @@ body {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background: var(--neutral-50);
+  background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
 }
-.sos-chevron {
-  color: var(--text-tertiary);
-  font-size: 18px;
-  flex-shrink: 0;
-  transition: color .15s, transform .15s;
-}
-@media (hover: hover) {
-  .sos-card:hover .sos-chevron { color: var(--blue-text); transform: translateX(3px); }
-}
-.sos-card:active .sos-chevron { color: var(--blue-text); }
+.sos-chevron { display: none; }
 .sos-body { flex: 1; min-width: 0; }
 .sos-title-row {
   display: flex;
@@ -745,9 +746,7 @@ svg.icon { display: block; }
   </div>
   <div class="home-scroll">
     <div id="home-panel-sim" class="home-panel active">
-<div class="flow-intro">
-      스크린이 대부분 안내해줘요.<br>아래 흐름만 훑어보고 가면 충분해요.
-    </div>
+<div class="flow-intro"><span class="flow-intro-emoji">☝🏻</span><span class="flow-intro-text">스크린이 대부분 안내해줘요.<br>아래 흐름만 훑어보고 가면 충분해요.</span></div>
 
     <div class="phase-header first" data-section="pre"><span class="phase-line"></span><span class="phase-label">경기 전</span><span class="phase-line"></span></div>
 
@@ -868,72 +867,65 @@ svg.icon { display: block; }
     </div>
     </div>
     <div id="home-panel-sos" class="home-panel">
-<div class="section-header"><span class="section-label">상황을 선택하세요</span></div>
+    <div class="section-header" style="padding-top:24px"><span class="section-label" style="color:#282B33">자주 발생하는 상황</span></div>
     <div class="sos-list">
-      <div class="sos-card" onclick="openDetail('late')" style="border-left-color:var(--blue-text); position:relative;">
-        <span class="badge warning" style="position:absolute; top:6px; left:10px;">가장 빈번</span>
-        <div class="sos-icon" >⏰</div>
+      <div class="sos-card priority" onclick="openDetail('late')">
+        <div class="sos-icon">⏰</div>
         <div class="sos-body">
           <div class="sos-title">지각자가 있어요</div>
           <div class="sos-sub">매치 시작 시점에 가장 많이 발생</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
 
-      <div class="sos-card" onclick="openDetail('team')" style="border-left-color:var(--blue-text); position:relative;">
-        <span class="badge warning" style="position:absolute; top:6px; left:10px;">빈번</span>
-        <div class="sos-icon" >🔄</div>
+      <div class="sos-card priority" onclick="openDetail('team')">
+        <div class="sos-icon">🔄</div>
         <div class="sos-body">
           <div class="sos-title">팀을 바꿔달라고 해요</div>
           <div class="sos-sub">매치 시작 전에 주로 발생</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
+    </div>
 
-      <div class="sos-card" onclick="openDetail('rain')" style="border-left-color:var(--blue-text)">
-        <div class="sos-icon" >🌧️</div>
+    <div class="section-header"><span class="section-label" style="color:#282B33">전체 상황별 가이드</span></div>
+    <div class="sos-list">
+      <div class="sos-card general" onclick="openDetail('rain')">
+        <div class="sos-icon">🌧️</div>
         <div class="sos-body">
           <div class="sos-title">비가 와요</div>
           <div class="sos-sub">강수량에 따라 다른 운영 방식 확인</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
 
-      <div class="sos-card" onclick="openDetail('short')" style="border-left-color:var(--blue-text)">
-        <div class="sos-icon" >👥</div>
+      <div class="sos-card general" onclick="openDetail('short')">
+        <div class="sos-icon">👥</div>
         <div class="sos-body">
           <div class="sos-title">인원이 부족해요</div>
           <div class="sos-sub">노쇼, 매치 이탈 등 대응 방법</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
 
-      <div class="sos-card" onclick="openDetail('screen')" style="border-left-color:var(--blue-text)">
-        <div class="sos-icon" >📺</div>
+      <div class="sos-card general" onclick="openDetail('screen')">
+        <div class="sos-icon">📺</div>
         <div class="sos-body">
           <div class="sos-title">스크린이 이상해요</div>
           <div class="sos-sub">현장 스크린의 오작동/미작동</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
 
-      <div class="sos-card" onclick="openDetail('app')" style="border-left-color:var(--blue-text)">
-        <div class="sos-icon" >⚠️</div>
+      <div class="sos-card general" onclick="openDetail('app')">
+        <div class="sos-icon">⚠️</div>
         <div class="sos-body">
           <div class="sos-title">앱 오류가 났어요</div>
           <div class="sos-sub">버튼이 안 눌리거나 기능이 작동하지 않는 상황</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
-    </div>
-    <div class="sos-list" style="padding-top:0; margin-top:8px">
-      <div class="sos-card" onclick="openDetail('faq')" style="border-left-color:var(--blue-text)">
-        <div class="sos-icon" style="background:var(--blue-soft)">💬</div>
+
+      <div class="sos-card general" onclick="openDetail('faq')">
+        <div class="sos-icon">💬</div>
         <div class="sos-body">
           <div class="sos-title">FAQ</div>
           <div class="sos-sub">자주 묻는 질문</div>
         </div>
-        <span class="sos-chevron">›</span>
       </div>
     </div>
   </div>
