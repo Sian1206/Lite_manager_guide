@@ -22,6 +22,8 @@
   --error-soft: #FFF0F0;
   --error-text: #C0392B;
   --blue-soft: #E8F7FF;
+  --sky-soft: #E8F7FF;
+  --sky-text: #1570FF;
   --blue-text: #1570FF;
   --surface: #FFFFFF;
   --bg: #F7F7F8;
@@ -258,7 +260,49 @@ body {
 /* ── 공통 섹션 ── */
 .section-header {
   padding: 20px 20px 8px;
+  margin: 0 20px;
 }
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 12px;
+  margin: 0 20px;
+}
+.phase-header .phase-line {
+  flex: 1;
+  height: 1px;
+  background: var(--divider);
+}
+.phase-header .phase-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue-text);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.phase-header.first {
+  padding-top: 24px;
+}
+.section-header:first-of-type {
+  padding-top: 0;
+}
+.section-header.with-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 20px 10px;
+}
+.section-phase-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+.section-phase-badge.pre { background: var(--blue-soft); color: var(--blue-text); }
+.section-phase-badge.mid { background: var(--blue-text); color: #fff; }
+.section-phase-badge.post { background: var(--neutral-100); color: var(--neutral-600); }
 .section-label {
   font-size: 12px;
   font-weight: 700;
@@ -501,19 +545,9 @@ body {
 
 /* Accordion */
 .accordion-item {
-  background: var(--surface);
-  border-radius: 0;
+  background: transparent;
   margin: 0 20px;
-  overflow: hidden;
-  border: 1px solid var(--divider);
-  border-top: none;
-}
-.accordion-section-start {
-  border-top: 1px solid var(--divider);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-.accordion-section-end {
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: visible;
 }
 .accordion-section-only {
   border-radius: var(--radius-lg);
@@ -524,7 +558,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px;
+  padding: 14px 4px;
   background: none;
   border: none;
   cursor: pointer;
@@ -537,17 +571,31 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--blue-soft);
-  color: var(--blue-text);
-  border: 1.5px solid var(--blue-text);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
   font-weight: 700;
   flex-shrink: 0;
-  transition: background .2s, color .2s;
+  flex-grow: 0;
+  transition: background .2s, color .2s, border-color .2s;
+  position: relative;
+  z-index: 2;
 }
+.accordion-num[data-section="pre"] { background: var(--sky-soft); color: var(--sky-text); border: 1.5px solid var(--sky-text); }
+.accordion-num[data-section="mid"] { background: var(--blue-soft); color: var(--blue-text); border: 1.5px solid var(--blue-text); }
+.accordion-num[data-section="post"] { background: var(--sky-soft); color: var(--sky-text); border: 1.5px solid var(--sky-text); }
+.accordion-item.open .accordion-num[data-section="pre"] { background: var(--sky-text); color: #fff; }
+.accordion-item.open .accordion-num[data-section="mid"] { background: var(--blue-text); color: #fff; }
+.accordion-item.open .accordion-num[data-section="post"] { background: var(--sky-text); color: #fff; }
+.accordion-num-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .accordion-label {
   flex: 1;
 }
@@ -570,10 +618,6 @@ body {
   transition: transform .2s;
 }
 .accordion-item.open .accordion-chevron { transform: rotate(90deg); }
-.accordion-item.open .accordion-num {
-  background: var(--blue-text);
-  color: #fff;
-}
 .accordion-item.open .accordion-desc {
   color: var(--blue-text);
 }
@@ -621,6 +665,7 @@ body {
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.65;
+  padding-left: 12px;
 }
 
 .sim-footer {
@@ -704,11 +749,11 @@ svg.icon { display: block; }
       스크린이 대부분 안내해줘요.<br>아래 흐름만 훑어보고 가면 충분해요.
     </div>
 
-    <div class="section-header" style="padding-top:20px" data-section="pre"><span class="section-label">경기 전</span></div>
+    <div class="phase-header first" data-section="pre"><span class="phase-line"></span><span class="phase-label">경기 전</span><span class="phase-line"></span></div>
 
-    <div class="accordion-item accordion-section-start" onclick="toggleAccordion(this)">
+    <div class="accordion-item accordion-first" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="pre">1</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="pre">1</div></div>
         <div class="accordion-label">
           <div class="accordion-title">15분 전 도착</div>
           <div class="accordion-desc">조끼 번호순으로 그물에 걸어두기.</div>
@@ -716,13 +761,13 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image1.png" alt="step 1" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
-    <div class="accordion-item accordion-section-end" onclick="toggleAccordion(this)">
+    <div class="accordion-item" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="pre">2</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="pre">2</div></div>
         <div class="accordion-label">
           <div class="accordion-title">매치 시작 준비</div>
           <div class="accordion-desc">지각자 체크. 매치 시작 5분 전부터 쿼터 탭에서 팀 순서 변경 기능 활용 가능.</div>
@@ -730,15 +775,15 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image2.png" alt="step 2" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
-    <div class="section-header" style="padding-top:20px" data-section="mid"><span class="section-label">경기 중</span></div>
+    <div class="phase-header" data-section="mid"><span class="phase-line"></span><span class="phase-label">경기 중</span><span class="phase-line"></span></div>
 
-    <div class="accordion-item accordion-section-start" onclick="toggleAccordion(this)">
+    <div class="accordion-item" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="mid">3</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="mid">3</div></div>
         <div class="accordion-label">
           <div class="accordion-title">매치 시작</div>
           <div class="accordion-desc">스크린 시작 버튼을 눌러 매치 시작.</div>
@@ -746,13 +791,13 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image3.png" alt="step 3" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
     <div class="accordion-item" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="mid">4</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="mid">4</div></div>
         <div class="accordion-label">
           <div class="accordion-title">골 기록</div>
           <div class="accordion-desc">골 터지면 아무나 골 버튼 누르기.</div>
@@ -760,13 +805,13 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image4.png" alt="step 4" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
     <div class="accordion-item" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="mid">5</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="mid">5</div></div>
         <div class="accordion-label">
           <div class="accordion-title">키퍼/쿼터 교체</div>
           <div class="accordion-desc">스크린이 알려줘요. 시간이 지체되지 않도록 참가자 독려.</div>
@@ -774,13 +819,13 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image5.png" alt="step 5" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
-    <div class="accordion-item accordion-section-end" onclick="toggleAccordion(this)">
+    <div class="accordion-item" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="mid">6</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="mid">6</div></div>
         <div class="accordion-label">
           <div class="accordion-title">과열 방지</div>
           <div class="accordion-desc">매치가 과열되거나 분위기가 나빠지지 않게 중재.</div>
@@ -788,15 +833,15 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image6.png" alt="step 6" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
-    <div class="section-header" style="padding-top:20px" data-section="post"><span class="section-label">경기 후</span></div>
+    <div class="phase-header" data-section="post"><span class="phase-line"></span><span class="phase-label">경기 후</span><span class="phase-line"></span></div>
 
-    <div class="accordion-item accordion-section-start" onclick="toggleAccordion(this)">
+    <div class="accordion-item" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="post">7</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="post">7</div></div>
         <div class="accordion-label">
           <div class="accordion-title">장비 반납</div>
           <div class="accordion-desc">공과 조끼 개수 확인 후 런드리 창고에 반납.</div>
@@ -804,13 +849,13 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image7.png" alt="step 7" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
 
-    <div class="accordion-item accordion-section-end" onclick="toggleAccordion(this)">
+    <div class="accordion-item accordion-last" onclick="toggleAccordion(this)">
       <button class="accordion-trigger">
-        <div class="accordion-num" data-section="post">8</div>
+        <div class="accordion-num-wrap"><div class="accordion-num" data-section="post">8</div></div>
         <div class="accordion-label">
           <div class="accordion-title">리포트 작성</div>
           <div class="accordion-desc">POM을 선정하고 리포트를 작성하면 모두 완료.</div>
@@ -818,7 +863,7 @@ svg.icon { display: block; }
         <span class="accordion-chevron">›</span>
       </button>
       <div class="accordion-body">
-        <div class="accordion-image">이미지 준비 중</div>
+        <div class="accordion-image"><img src="images/section_image8.png" alt="step 8" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius-md);"></div>
       </div>
     </div>
     </div>
@@ -1188,14 +1233,14 @@ function toggleAccordion(item) {
   const isOpen = item.classList.contains('open');
   if (container) {
     container.querySelectorAll('.accordion-item').forEach(el => el.classList.remove('open'));
-    container.querySelectorAll('.section-label').forEach(el => el.classList.remove('section-label-active'));
+    container.querySelectorAll('.phase-label').forEach(el => el.classList.remove('section-label-active'));
   }
   if (!isOpen) {
     item.classList.add('open');
     const numEl = item.querySelector('.accordion-num');
     const section = numEl ? numEl.dataset.section : null;
     if (section && container) {
-      const header = container.querySelector('[data-section="' + section + '"].section-header .section-label');
+      const header = container.querySelector('[data-section="' + section + '"].phase-header .phase-label');
       if (header) header.classList.add('section-label-active');
     }
   }
