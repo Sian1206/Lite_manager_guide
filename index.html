@@ -1277,6 +1277,8 @@ function switchHomeTab(name, el) {
   el.classList.add('active');
   document.querySelectorAll('.home-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('home-panel-' + name).classList.add('active');
+  const scrollArea = document.querySelector('.home-scroll');
+  if (scrollArea) scrollArea.scrollTop = 0;
 }
 
 function openDetail(id) {
