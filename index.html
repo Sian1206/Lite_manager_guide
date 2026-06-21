@@ -940,7 +940,7 @@ svg.icon { display: block; }
 
     <div class="section-divider"></div>
 
-    <a href="https://www.instagram.com/reel/DWYVyF1j3fZ" target="_blank" class="instagram-link-btn">
+    <a href="https://www.instagram.com/reel/DWYVyF1j3fZ" target="_blank" class="instagram-link-btn" onclick="trackEvent('external_link_click', 'instagram', 'sim')">
       <span class="instagram-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="white" stroke-width="2"/>
@@ -1018,7 +1018,7 @@ svg.icon { display: block; }
 
     <div class="section-divider"></div>
 
-    <a href="https://plabfootball.channel.io/home" target="_blank" class="channeltalk-link-btn">
+    <a href="https://plabfootball.channel.io/home" target="_blank" class="channeltalk-link-btn" onclick="trackEvent('external_link_click', 'channeltalk', 'sos')">
       <span class="channeltalk-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M12 3C6.477 3 2 6.94 2 11.8c0 2.76 1.5 5.22 3.86 6.86-.13.85-.5 2.18-1.36 3.74-.1.18.07.39.27.34 1.85-.48 3.3-1.32 4.1-1.87.99.27 2.05.42 3.13.42 5.523 0 10-3.94 10-8.8C22 6.94 17.523 3 12 3z" fill="white"/>
@@ -1284,6 +1284,50 @@ svg.icon { display: block; }
 
 </div><!-- .viewport -->
 <script>
+const ANALYTICS_URL = 'https://script.google.com/macros/s/AKfycbxXD9I2gh6gejaxALJ1s3DHgGy39hn0hspTvvVHAoqV4V-IISYXzx0x3me5tCHlwKQc/exec';
+
+function getSessionId() {
+  let sid = sessionStorage.getItem('lmg_session_id');
+  if (!sid) {
+    sid = 'sid_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+    sessionStorage.setItem('lmg_session_id', sid);
+  }
+  return sid;
+}
+
+function trackEvent(eventType, eventDetail, tab) {
+  try {
+    fetch(ANALYTICS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        event_type: eventType,
+        event_detail: eventDetail || '',
+        tab: tab || '',
+        session_id: getSessionId()
+      })
+    });
+  } catch (err) {
+    // fail silently - never break the user experience
+  }
+}
+
+// Track initial page load
+const pageLoadTime = Date.now();
+trackEvent('page_view', '', 'sim');
+
+// Track time on page when user leaves
+window.addEventListener('beforeunload', function() {
+  const seconds = Math.round((Date.now() - pageLoadTime) / 1000);
+  navigator.sendBeacon(ANALYTICS_URL, JSON.stringify({
+    event_type: 'time_on_page',
+    event_detail: seconds + 's',
+    tab: '',
+    session_id: getSessionId()
+  }));
+});
+
 function switchHomeTab(name, el) {
   document.querySelectorAll('.home-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
@@ -1291,6 +1335,7 @@ function switchHomeTab(name, el) {
   document.getElementById('home-panel-' + name).classList.add('active');
   const scrollArea = document.querySelector('.home-scroll');
   if (scrollArea) scrollArea.scrollTop = 0;
+  trackEvent('tab_click', el.textContent.trim(), name);
 }
 
 function openDetail(id) {
@@ -1304,6 +1349,9 @@ function openDetail(id) {
   requestAnimationFrame(() => requestAnimationFrame(() => {
     el.style.transform = 'translateX(0)';
   }));
+  const titleEl = el.querySelector('.appbar-title');
+  const label = titleEl ? titleEl.textContent.trim() : id;
+  trackEvent('situation_card_click', label, 'sos');
 }
 
 function closeDetail(id) {
