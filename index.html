@@ -1383,6 +1383,9 @@ function toggleAccordion(item) {
       const header = container.querySelector('[data-section="' + section + '"].phase-header .phase-label');
       if (header) header.classList.add('section-label-active');
     }
+    const titleEl = item.querySelector('.accordion-title');
+    const stepLabel = titleEl ? titleEl.textContent.trim() : '';
+    trackEvent('accordion_open', stepLabel, 'sim');
   }
 }
 
