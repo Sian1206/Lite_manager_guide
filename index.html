@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -410,6 +409,7 @@ body {
   gap: 14px;
   cursor: pointer;
   border: none;
+  text-decoration: none;
   transition: filter .1s;
   -webkit-user-select: none;
 }
@@ -454,19 +454,6 @@ body {
 .badge.warning { background: #FFEBEB; color: #C0392B; }
 
 /* ── 상세 오버레이 (2뎁스) ── */
-.detail-overlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--bg);
-  z-index: 500;
-  display: none;
-  flex-direction: column;
-  overflow: hidden;
-  transform: translateX(100%);
-  transition: transform .3s cubic-bezier(0.25, 0, 0.1, 1);
-}
-
-
 .detail-intro {
   margin: 16px 20px 0;
   padding: 12px 16px;
@@ -788,7 +775,7 @@ body {
 /* 아이콘 SVG */
 svg.icon { display: block; }
 
-
+@media (hover: hover) {
   .home-btn:hover .home-btn-icon { background: var(--blue-text); }
   .home-btn.sim:hover .home-btn-desc,
   .home-btn.sos:hover .home-btn-desc { color: var(--blue-text); }
@@ -1286,6 +1273,19 @@ svg.icon { display: block; }
 <script>
 const ANALYTICS_URL = 'https://script.google.com/macros/s/AKfycbxXD9I2gh6gejaxALJ1s3DHgGy39hn0hspTvvVHAoqV4V-IISYXzx0x3me5tCHlwKQc/exec';
 
+function getDeviceId() {
+  let did = localStorage.getItem('lmg_device_id');
+  let isFirstVisit = false;
+  if (!did) {
+    did = 'did_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+    localStorage.setItem('lmg_device_id', did);
+    isFirstVisit = true;
+  }
+  let visitCount = parseInt(localStorage.getItem('lmg_visit_count') || '0', 10) + 1;
+  localStorage.setItem('lmg_visit_count', visitCount);
+  return { device_id: did, visit_count: visitCount, is_first_visit: isFirstVisit };
+}
+
 function getSessionId() {
   let sid = sessionStorage.getItem('lmg_session_id');
   if (!sid) {
@@ -1297,6 +1297,7 @@ function getSessionId() {
 
 function trackEvent(eventType, eventDetail, tab) {
   try {
+    const device = getDeviceId();
     fetch(ANALYTICS_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -1305,7 +1306,9 @@ function trackEvent(eventType, eventDetail, tab) {
         event_type: eventType,
         event_detail: eventDetail || '',
         tab: tab || '',
-        session_id: getSessionId()
+        session_id: getSessionId(),
+        device_id: device.device_id,
+        visit_count: device.visit_count
       })
     });
   } catch (err) {
@@ -1320,11 +1323,14 @@ trackEvent('page_view', '', 'sim');
 // Track time on page when user leaves
 window.addEventListener('beforeunload', function() {
   const seconds = Math.round((Date.now() - pageLoadTime) / 1000);
+  const device = getDeviceId();
   navigator.sendBeacon(ANALYTICS_URL, JSON.stringify({
     event_type: 'time_on_page',
     event_detail: seconds + 's',
     tab: '',
-    session_id: getSessionId()
+    session_id: getSessionId(),
+    device_id: device.device_id,
+    visit_count: device.visit_count
   }));
 });
 
