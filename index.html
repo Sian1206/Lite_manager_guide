@@ -66,6 +66,16 @@ body{
   box-shadow:var(--shadow);
   overflow:hidden;
 }
+
+@media (max-width:480px){
+  body{padding:0;align-items:stretch;}
+  .card{
+    max-width:100%;
+    min-height:100vh;min-height:100dvh;
+    border-radius:0;box-shadow:none;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+}
 .card-pad-top{padding:24px 20px 16px;}
 .card-pad-bottom{padding:4px 20px 20px;}
 
