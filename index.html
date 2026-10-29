@@ -88,7 +88,7 @@ body{
     display:flex;flex-direction:column;justify-content:center;
   }
 }
-.card-pad-top{padding:24px 20px 16px;}
+.card-pad-top{padding:24px 20px 12px;}
 .card-pad-bottom{padding:4px 20px 20px;}
 
 .headline{
@@ -106,7 +106,7 @@ body{
 /* ── 탭바 ── */
 .tabbar{
   display:flex;gap:6px;
-  margin:16px 20px 0;
+  margin:8px 20px 0;
   padding:4px;
   background:var(--neutral-pill);
   border-radius:14px;
@@ -129,32 +129,43 @@ body{
   background:linear-gradient(45deg,#6FDC3A,#A6F56F 30%,#E2FFB2);color:var(--accent-on);
   font-family:inherit;font-size:14px;font-weight:600;text-align:left;
   cursor:pointer;
+  position:relative;overflow:hidden;
+  box-shadow:0 6px 18px rgba(111,220,58,.45);
 }
 .start-btn .cta-arrow{margin-left:auto;font-size:15px;}
+.start-btn::after{ /* 눈길을 끄는 빛: 4초마다 한 번 왼쪽→오른쪽으로 지나감 */
+  content:'';position:absolute;top:0;bottom:0;left:-60%;width:45%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:skewX(-20deg);
+  animation:btn-shine 4s ease-in-out 1s infinite;
+  pointer-events:none;
+}
+@keyframes btn-shine{0%{left:-60%;}30%,100%{left:130%;}}
+@media (prefers-reduced-motion: reduce){.start-btn::after{animation:none;display:none;}}
 
 /* ── 진행 방법 탭: 매치 전·중·후 흐름 ── */
-.flow-line{margin:2px 0 44px;}
-.fl-step{display:flex;gap:14px;}
-.fl-rail{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:34px;}
-.fl-dot{
-  width:34px;height:34px;border-radius:50%;flex-shrink:0;
-  background:var(--accent-soft);
-  display:flex;align-items:center;justify-content:center;font-size:16px;
+.flow-card{ /* 세 가지 요약을 연한 라임 상자로 묶어 첫 화면에서 먼저 읽히게 */
+  background:var(--card);border:1px solid #A6F56F;border-radius:16px;
+  padding:18px 16px 20px;margin-bottom:28px;
 }
-.fl-step:not(:last-child) .fl-rail::after{
-  content:'';flex:1;width:2px;min-height:16px;margin:4px 0;
-  background:var(--accent);border-radius:1px;
-}
-.fl-body{padding:5px 0 22px;}
-.fl-step:last-child .fl-body{padding-bottom:0;}
-.fl-phase{font-size:12.5px;font-weight:600;color:var(--ink-mute);margin-bottom:3px;}
-.fl-text{font-size:15px;color:var(--ink);line-height:1.55;font-weight:500;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .flow-card{border-color:rgba(166,245,111,.55);}}
+:root[data-theme="dark"] .flow-card{border-color:rgba(166,245,111,.55);}
+.tl-row{ /* 세 가지 요약: 단계 라벨 · 라임 점과 세로선 · 굵은 핵심 + 회색 보충 */
+  display:grid;grid-template-columns:48px 12px 1fr;column-gap:12px;}
+.tl-time{font-size:13px;font-weight:600;color:var(--ink-mute);padding-top:1px;white-space:nowrap;text-align:right;}
+.tl-rail{position:relative;}
+.tl-rail i{position:absolute;top:4px;left:0;width:12px;height:12px;border-radius:50%;background:#A6F56F;}
+.tl-row:not(:last-child) .tl-rail::after{content:'';position:absolute;top:20px;bottom:4px;left:5px;width:2px;border-radius:1px;background:#A6F56F;}
+.tl-body{padding-bottom:20px;}
+.tl-row:last-child .tl-body{padding-bottom:0;}
+.tl-key{font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.4;}
+.tl-sub{font-size:13px;color:var(--ink-soft);line-height:1.5;margin-top:2px;}
 
 /* ── 탭 패널 (세 탭 중 가장 긴 높이로 고정해 탭 전환 시 화면이 흔들리지 않게) ── */
 .panels{position:relative;max-height:max(60vh, 320px);}
 .tab-panel{display:none;height:100%;}
 .tab-panel.active{display:block;}
-.panel-pad{padding:18px 20px 4px;height:100%;overflow-y:auto;}
+.panel-pad{padding:28px 20px 4px;height:100%;overflow-y:auto;}
 
 .section-title{
   font-size:14px;font-weight:700;color:var(--ink);
@@ -205,12 +216,21 @@ body{
 }
 
 /* ── 스크린 가이드 요약: 흐름형 ── */
-.scr-flow{margin-bottom:52px;}
-.scr-flow .fl-body{padding-top:6px;padding-bottom:16px;}
-.scr-flow .fl-text{font-size:14.5px;line-height:1.6;}
-.scr-flow .fl-text b{font-weight:800;}
-.fl-num{background:var(--accent);color:var(--accent-on);font-size:15px;font-weight:700;} /* 상세 화면 단계 번호와 같은 라임 숫자 원 */
-.fl-note{display:block;margin-top:4px;font-size:12.5px;font-style:italic;font-weight:500;color:var(--ink-mute);line-height:1.5;}
+.scr-card{margin-bottom:32px;} /* 진행 방법 탭과 같은 라임 1px 상자 */
+.flow-card .section-title{font-style:italic;}
+.flow-card{margin-top:18px;}
+.bubble{ /* 말풍선 제목: 상자 테두리 위에 걸친 흰 말풍선 */
+  display:inline-flex;position:relative;
+  padding:7px 13px;margin:-36px 0 18px;border-radius:12px;
+  background:var(--card);border:1px solid #A6F56F;
+}
+.bubble::after{content:'';position:absolute;left:18px;bottom:-6px;width:10px;height:10px;background:var(--card);
+  border-right:1px solid #A6F56F;border-bottom:1px solid #A6F56F;transform:rotate(45deg);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bubble,:root:not([data-theme="light"]) .bubble::after{border-color:rgba(166,245,111,.55);}}
+:root[data-theme="dark"] .bubble,:root[data-theme="dark"] .bubble::after{border-color:rgba(166,245,111,.55);}
+.ck-row{display:flex;gap:10px;align-items:flex-start;}
+.ck-row:not(:last-child){margin-bottom:14px;}
+.ck-mark{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:#A6F56F;color:#131D17;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;}
 
 /* ── 뷰 전환 (탭 화면 ↔ 상세 단계 화면) ── */
 .view{display:none;}
@@ -317,20 +337,13 @@ body{
   <!-- ══ 탭1: 매치 진행 방법 (3줄 요약) ══ -->
   <div class="tab-panel active" id="panel-flow">
     <div class="panel-pad">
-      <div class="section-title" style="margin-bottom:16px;">"세 가지만 기억하세요"</div>
-      <div class="flow-line">
-        <div class="fl-step">
-          <div class="fl-rail"><span class="fl-dot">⏰</span></div>
-          <div class="fl-body"><div class="fl-phase">매치 전</div><div class="fl-text">매치 시작 15분 전 도착 → 조끼와 공 준비</div></div>
-        </div>
-        <div class="fl-step">
-          <div class="fl-rail"><span class="fl-dot">🖥️</span></div>
-          <div class="fl-body"><div class="fl-phase">매치 중</div><div class="fl-text">스크린 안내에 따라 매치 진행</div></div>
-        </div>
-        <div class="fl-step">
-          <div class="fl-rail"><span class="fl-dot">📝</span></div>
-          <div class="fl-body"><div class="fl-phase">매치 후</div><div class="fl-text">사용한 조끼와 공 반납 → 리포트 작성</div></div>
-        </div>
+      <div class="flow-card">
+      <div class="section-title bubble">세 가지만 기억하세요</div>
+      <div class="tl">
+        <div class="tl-row"><div class="tl-time">매치 전</div><div class="tl-rail"><i></i></div><div class="tl-body"><div class="tl-key">15분 전 도착</div><div class="tl-sub">조끼와 공 준비</div></div></div>
+        <div class="tl-row"><div class="tl-time">매치 중</div><div class="tl-rail"><i></i></div><div class="tl-body"><div class="tl-key">스크린 시작</div><div class="tl-sub">과열 방지 · 다툼 중재</div></div></div>
+        <div class="tl-row"><div class="tl-time">매치 후</div><div class="tl-rail"><i></i></div><div class="tl-body"><div class="tl-key">반납 · 리포트</div><div class="tl-sub">조끼와 공 반납 후 리포트 작성</div></div></div>
+      </div>
       </div>
       <button class="start-btn" onclick="openDetail()"><span>🔍</span><span>역할 자세히 보기</span><span class="cta-arrow">›</span></button>
       <a class="cta" href="https://www.instagram.com/reel/DWYVyF1j3fZ" target="_blank">
@@ -342,11 +355,13 @@ body{
   <!-- ══ 탭2: 스크린 가이드 ══ -->
   <div class="tab-panel" id="panel-screen">
     <div class="panel-pad">
-      <div class="section-title" style="margin-bottom:16px;">"첫 쿼터 시작만 제때 하면 돼요"</div>
-      <div class="flow-line scr-flow">
-        <div class="fl-step"><div class="fl-rail"><span class="fl-dot fl-num">1</span></div><div class="fl-body"><div class="fl-text">스크린은 매치 시작과 종료, 쿼터의 시작과 종료, 골키퍼 교체를 자동으로 안내해요 🔊</div></div></div>
-        <div class="fl-step"><div class="fl-rail"><span class="fl-dot fl-num">2</span></div><div class="fl-body"><div class="fl-text">매치를 시작하려면 라커룸 진행 탭에서 스크린 시작하기 버튼을 눌러 주세요 ☝️<span class="fl-note">현장의 골 버튼 사이 작은 버튼을 눌러도 스크린이 시작돼요.</span></div></div></div>
-        <div class="fl-step"><div class="fl-rail"><span class="fl-dot fl-num">3</span></div><div class="fl-body"><div class="fl-text">스크린이 시작되면 안내에 따라 매치를 즐겨요 🙌</div></div></div>
+      <div class="flow-card scr-card">
+      <div class="section-title bubble">첫 쿼터 시작만 제때 하면 돼요</div>
+      <div class="ck">
+        <div class="ck-row"><span class="ck-mark">✓</span><div><div class="tl-key">자동 안내</div><div class="tl-sub">쿼터 시작·종료, 골키퍼 교체를 스크린이 알려줘요</div></div></div>
+        <div class="ck-row"><span class="ck-mark">✓</span><div><div class="tl-key">종료 시간은 그대로</div><div class="tl-sub">언제 눌러도 쿼터 시간이 자동으로 나눠져요</div></div></div>
+        <div class="ck-row"><span class="ck-mark">✓</span><div><div class="tl-key">안 누르면 7분 뒤 자동 시작</div><div class="tl-sub">시작 시간 7분이 지나면 매치가 자동으로 시작돼요</div></div></div>
+      </div>
       </div>
       <div class="section-title">스크린 가이드 FAQ</div>
       <div id="screenFaqList"></div>
